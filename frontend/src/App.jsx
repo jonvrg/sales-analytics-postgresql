@@ -73,7 +73,7 @@ function App() {
   return (
     <div className="container py-4">
       <Header />
-
+  
       <div className="row g-4 mb-4">
         <div className="col-lg-6">
           <SearchPanel onRunQuery={runQuery} />
@@ -82,13 +82,16 @@ function App() {
           <InsertOrderForm onInsert={insertOrder} />
         </div>
       </div>
-
-      <div className="row g-4">
-        <div className="col-lg-8">
-          <OrdersTable orders={orders} loading={loading} />
-        </div>
-        <div className="col-lg-4">
+  
+      <div className="row g-4 mb-4">
+        <div className="col-12">
           <ExplainPanel explainText={explainText} />
+        </div>
+      </div>
+  
+      <div className="row g-4">
+        <div className="col-12">
+          <OrdersTable orders={orders} loading={loading} />
         </div>
       </div>
     </div>
