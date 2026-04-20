@@ -22,3 +22,32 @@ EXPLAIN ANALYZE
 SELECT *
 FROM orders
 WHERE country = 'France';
+
+
+--Testing creating, selecting, and deleting
+SELECT *
+FROM orders
+WHERE invoice_no = 'TEST123';
+
+DELETE FROM orders
+WHERE invoice_no = 'TEST123';
+
+-- Last 7 days relative to latest dataset timestamp
+SELECT id, invoice_no, product, quantity, order_date, unit_price, country
+FROM orders
+WHERE order_date >= (
+    SELECT MAX(order_date) - INTERVAL '7 days'
+    FROM orders
+)
+ORDER BY order_date
+LIMIT 50;
+
+-- Last 30 days relative to latest dataset timestamp
+SELECT id, invoice_no, product, quantity, order_date, unit_price, country
+FROM orders
+WHERE order_date >= (
+    SELECT MAX(order_date) - INTERVAL '30 days'
+    FROM orders
+)
+ORDER BY order_date
+LIMIT 50;

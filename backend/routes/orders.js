@@ -5,21 +5,23 @@ const router = express.Router();
 
 // Recent orders
 router.get('/orders/recent', async (_req, res) => {
-  try {
-    const result = await pool.query(`
-      SELECT id, invoice_no, product, quantity, order_date, unit_price, country
-      FROM orders
-      WHERE order_date >= TIMESTAMP '2011-12-01 00:00:00'
-        AND order_date < TIMESTAMP '2011-12-08 00:00:00'
-      ORDER BY order_date
-      LIMIT 50
-    `);
-
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to fetch recent orders.' });
-  }
+    try {
+      const result = await pool.query(`
+        SELECT id, invoice_no, product, quantity, order_date, unit_price, country
+        FROM orders
+        WHERE order_date >= (
+          SELECT MAX(order_date) - INTERVAL '7 days'
+          FROM orders
+        )
+        ORDER BY order_date DESC
+        LIMIT 50
+      `);
+  
+      res.json(result.rows);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to fetch recent orders.' });
+    }
 });
 
 // Product search
@@ -118,20 +120,22 @@ router.post('/orders', async (req, res) => {
 
 // EXPLAIN recent
 router.get('/explain/recent', async (_req, res) => {
-  try {
-    const result = await pool.query(`
-      EXPLAIN ANALYZE
-      SELECT *
-      FROM orders
-      WHERE order_date >= TIMESTAMP '2011-12-01 00:00:00'
-        AND order_date < TIMESTAMP '2011-12-08 00:00:00'
-    `);
-
-    res.json(result.rows.map((r) => r['QUERY PLAN']).join('\n'));
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to explain recent query.' });
-  }
+    try {
+      const result = await pool.query(`
+        EXPLAIN ANALYZE
+        SELECT *
+        FROM orders
+        WHERE order_date >= (
+          SELECT MAX(order_date) - INTERVAL '7 days'
+          FROM orders
+        )
+      `);
+  
+      res.json(result.rows.map((r) => r['QUERY PLAN']).join('\n'));
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to explain recent query.' });
+    }
 });
 
 // EXPLAIN product

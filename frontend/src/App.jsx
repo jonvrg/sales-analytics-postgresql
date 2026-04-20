@@ -18,8 +18,8 @@ function App() {
       let explainUrl = '';
 
       if (operation === 'recent') {
-        ordersUrl = 'http://localhost:5001/api/orders/recent';
-        explainUrl = 'http://localhost:5001/api/explain/recent';
+        ordersUrl = `http://localhost:5001/api/orders/recent`;
+        explainUrl = `http://localhost:5001/api/explain/recent`;
       } else if (operation === 'product') {
         ordersUrl = `http://localhost:5001/api/orders/product?search=${encodeURIComponent(value)}`;
         explainUrl = `http://localhost:5001/api/explain/product?search=${encodeURIComponent(value)}`;
@@ -33,6 +33,10 @@ function App() {
         fetch(explainUrl),
       ]);
 
+      if (!ordersRes.ok || !explainRes.ok) {
+        throw new Error('Failed to fetch data from backend.');
+      }
+
       const ordersData = await ordersRes.json();
       const explainData = await explainRes.json();
 
@@ -40,6 +44,7 @@ function App() {
       setExplainText(explainData);
     } catch (error) {
       console.error('Error running query:', error);
+      setOrders([]);
       setExplainText('Failed to fetch query results.');
     } finally {
       setLoading(false);
@@ -53,6 +58,10 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newOrder),
       });
+
+      if (!res.ok) {
+        throw new Error('Failed to insert order.');
+      }
 
       const inserted = await res.json();
       setOrders((prev) => [inserted, ...prev]);
