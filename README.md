@@ -10,6 +10,36 @@ A PostgreSQL-backed e-commerce sales analytics dashboard built using the Online 
 - React + Vite
 - Bootstrap
 
+## Application Operations
+
+The dashboard supports these main operations:
+
+### 1. Recent Orders by Date
+- Application: shows recent orders from the latest 7-day period in the dataset
+- Database internals: uses a B-tree index on `order_date`
+- Why it matters: enables index range scans instead of scanning the whole table
+
+### 2. Product Search
+- Application: searches products by keyword
+- Database internals: product search with `ILIKE '%term%'` can trigger a sequential scan
+- Why it matters: query structure affects whether an index can be used
+
+### 3. Filter by Country
+- Application: filters rows by country
+- Database internals: non-indexed filter results in sequential scan / parallel sequential scan
+- Why it matters: PostgreSQL must inspect many rows when no useful index exists
+
+### 4. Insert New Order
+- Application: inserts a new sales record through the dashboard
+- Database internals: PostgreSQL uses MVCC to handle concurrent reads and writes
+- Why it matters: supports live transaction-style workloads without heavy locking
+
+## Notes
+
+- The dataset is historical, so "recent" means recent **relative to the latest timestamp in the dataset**, not the current real-world date.
+- If you insert test rows during development, delete them before submission/demo.
+- Do **not** commit your real `.env` file to GitHub.
+
 ## Project Structure
 
 ```text
@@ -149,33 +179,3 @@ Frontend runs at:
 ```text
 http://localhost:5173
 ```
-
-## Application Operations
-
-The dashboard supports these main operations:
-
-### 1. Recent Orders by Date
-- Application: shows recent orders from the latest 7-day period in the dataset
-- Database internals: uses a B-tree index on `order_date`
-- Why it matters: enables index range scans instead of scanning the whole table
-
-### 2. Product Search
-- Application: searches products by keyword
-- Database internals: product search with `ILIKE '%term%'` can trigger a sequential scan
-- Why it matters: query structure affects whether an index can be used
-
-### 3. Filter by Country
-- Application: filters rows by country
-- Database internals: non-indexed filter results in sequential scan / parallel sequential scan
-- Why it matters: PostgreSQL must inspect many rows when no useful index exists
-
-### 4. Insert New Order
-- Application: inserts a new sales record through the dashboard
-- Database internals: PostgreSQL uses MVCC to handle concurrent reads and writes
-- Why it matters: supports live transaction-style workloads without heavy locking
-
-## Notes
-
-- The dataset is historical, so "recent" means recent **relative to the latest timestamp in the dataset**, not the current real-world date.
-- If you insert test rows during development, delete them before submission/demo.
-- Do **not** commit your real `.env` file to GitHub.
