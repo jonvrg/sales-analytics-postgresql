@@ -1,0 +1,18 @@
+body {
+  background-color: #f8f9fa;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+}
+
+.explain-box {
+  background: #111827;
+  color: #e5e7eb;
+  padding: 1rem;
+  border-radius: 10px;
+  min-height: 220px;
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+}
