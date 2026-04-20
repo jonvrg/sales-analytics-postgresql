@@ -1,34 +1,65 @@
-import Header from './components/Header'
-import SearchPanel from './components/SearchPanel'
-import InsertOrderForm from './components/InsertOrderForm'
-import OrdersTable from './components/OrdersTable'
-import ExplainPanel from './components/ExplainPanel'
+import { useState } from 'react';
+import Header from './components/Header';
+import SearchPanel from './components/SearchPanel';
+import InsertOrderForm from './components/InsertOrderForm';
+import OrdersTable from './components/OrdersTable';
+import ExplainPanel from './components/ExplainPanel';
 
 function App() {
-  const sampleOrders = [
-    {
-      id: 1,
-      invoice_no: '536365',
-      product: 'WHITE HANGING HEART T-LIGHT HOLDER',
-      quantity: 6,
-      order_date: '2010-12-01 08:26:00',
-      unit_price: 2.55,
-      country: 'United Kingdom',
-    },
-    {
-      id: 2,
-      invoice_no: '536365',
-      product: 'WHITE METAL LANTERN',
-      quantity: 6,
-      order_date: '2010-12-01 08:26:00',
-      unit_price: 3.39,
-      country: 'United Kingdom',
-    },
-  ]
+  const [orders, setOrders] = useState([]);
+  const [explainText, setExplainText] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const sampleExplain = `Index Scan using idx_orders_order_date on orders
-Index Cond: ((order_date >= '2011-12-01 00:00:00') AND (order_date < '2011-12-08 00:00:00'))
-Execution Time: 6.323 ms`
+  const runQuery = async (operation, value) => {
+    setLoading(true);
+
+    try {
+      let ordersUrl = '';
+      let explainUrl = '';
+
+      if (operation === 'recent') {
+        ordersUrl = 'http://localhost:5001/api/orders/recent';
+        explainUrl = 'http://localhost:5001/api/explain/recent';
+      } else if (operation === 'product') {
+        ordersUrl = `http://localhost:5001/api/orders/product?search=${encodeURIComponent(value)}`;
+        explainUrl = `http://localhost:5001/api/explain/product?search=${encodeURIComponent(value)}`;
+      } else if (operation === 'country') {
+        ordersUrl = `http://localhost:5001/api/orders/country?country=${encodeURIComponent(value)}`;
+        explainUrl = `http://localhost:5001/api/explain/country?country=${encodeURIComponent(value)}`;
+      }
+
+      const [ordersRes, explainRes] = await Promise.all([
+        fetch(ordersUrl),
+        fetch(explainUrl),
+      ]);
+
+      const ordersData = await ordersRes.json();
+      const explainData = await explainRes.json();
+
+      setOrders(ordersData);
+      setExplainText(explainData);
+    } catch (error) {
+      console.error('Error running query:', error);
+      setExplainText('Failed to fetch query results.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const insertOrder = async (newOrder) => {
+    try {
+      const res = await fetch('http://localhost:5001/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newOrder),
+      });
+
+      const inserted = await res.json();
+      setOrders((prev) => [inserted, ...prev]);
+    } catch (error) {
+      console.error('Error inserting order:', error);
+    }
+  };
 
   return (
     <div className="container py-4">
@@ -36,23 +67,23 @@ Execution Time: 6.323 ms`
 
       <div className="row g-4 mb-4">
         <div className="col-lg-6">
-          <SearchPanel />
+          <SearchPanel onRunQuery={runQuery} />
         </div>
         <div className="col-lg-6">
-          <InsertOrderForm />
+          <InsertOrderForm onInsert={insertOrder} />
         </div>
       </div>
 
       <div className="row g-4">
         <div className="col-lg-8">
-          <OrdersTable orders={sampleOrders} />
+          <OrdersTable orders={orders} loading={loading} />
         </div>
         <div className="col-lg-4">
-          <ExplainPanel explainText={sampleExplain} />
+          <ExplainPanel explainText={explainText} />
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

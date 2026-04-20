@@ -22,3 +22,23 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# Environment files
+backend/.env
+backend/node_modules/
+frontend/node_modules/
+
+
+# Logs
+*.log
+npm-debug.log*
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Build output
+frontend/dist/

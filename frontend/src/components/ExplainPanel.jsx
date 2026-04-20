@@ -6,7 +6,7 @@ function ExplainPanel({ explainText }) {
           <pre className="explain-box">{explainText}</pre>
         </div>
       </div>
-    )
+    );
   }
   
-  export default ExplainPanel
+  export default ExplainPanel;
