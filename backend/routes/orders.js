@@ -205,4 +205,116 @@ router.get('/analytics/summary', async (_req, res) => {
   }
 });
 
+// EXPLAIN analytics summary
+router.get('/explain/summary', async (_req, res) => {
+  try {
+    const result = await pool.query(`
+      EXPLAIN ANALYZE
+      SELECT
+        COUNT(*) AS total_rows,
+        COUNT(DISTINCT invoice_no) AS total_orders,
+        COALESCE(SUM(quantity), 0) AS total_quantity,
+        COALESCE(ROUND(SUM(quantity * unit_price)::numeric, 2), 0) AS total_revenue,
+        COALESCE(ROUND(AVG(quantity * unit_price)::numeric, 2), 0) AS avg_line_value,
+        COALESCE(ROUND(AVG(unit_price)::numeric, 2), 0) AS avg_unit_price
+      FROM orders
+      WHERE quantity > 0
+        AND unit_price > 0
+    `);
+
+    res.json(result.rows.map((r) => r['QUERY PLAN']).join('\n'));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to explain summary query.' });
+  }
+});
+
+// Revenue over time chart
+router.get('/analytics/revenue-over-time', async (_req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        DATE(order_date) AS order_day,
+        ROUND(SUM(quantity * unit_price)::numeric, 2) AS revenue
+      FROM orders
+      WHERE quantity > 0
+        AND unit_price > 0
+      GROUP BY DATE(order_date)
+      ORDER BY order_day
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch revenue over time.' });
+  }
+});
+
+// EXPLAIN revenue over time
+router.get('/explain/revenue-over-time', async (_req, res) => {
+  try {
+    const result = await pool.query(`
+      EXPLAIN ANALYZE
+      SELECT
+        DATE(order_date) AS order_day,
+        ROUND(SUM(quantity * unit_price)::numeric, 2) AS revenue
+      FROM orders
+      WHERE quantity > 0
+        AND unit_price > 0
+      GROUP BY DATE(order_date)
+      ORDER BY order_day
+    `);
+
+    res.json(result.rows.map((r) => r['QUERY PLAN']).join('\n'));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to explain revenue over time query.' });
+  }
+});
+
+// Top products by revenue
+router.get('/analytics/top-products', async (_req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        product,
+        ROUND(SUM(quantity * unit_price)::numeric, 2) AS revenue
+      FROM orders
+      WHERE quantity > 0
+        AND unit_price > 0
+      GROUP BY product
+      ORDER BY revenue DESC
+      LIMIT 10
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch top products.' });
+  }
+});
+
+// EXPLAIN top products by revenue
+router.get('/explain/top-products', async (_req, res) => {
+  try {
+    const result = await pool.query(`
+      EXPLAIN ANALYZE
+      SELECT
+        product,
+        ROUND(SUM(quantity * unit_price)::numeric, 2) AS revenue
+      FROM orders
+      WHERE quantity > 0
+        AND unit_price > 0
+      GROUP BY product
+      ORDER BY revenue DESC
+      LIMIT 10
+    `);
+
+    res.json(result.rows.map((r) => r['QUERY PLAN']).join('\n'));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to explain top products query.' });
+  }
+});
+
 module.exports = router;

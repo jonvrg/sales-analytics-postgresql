@@ -5,6 +5,8 @@ import InsertOrderForm from './components/InsertOrderForm';
 import OrdersTable from './components/OrdersTable';
 import ExplainPanel from './components/ExplainPanel';
 import KpiCards from './components/KpiCards';
+import RevenueOverTimeChart from './components/RevenueOverTimeChart';
+import TopProductsChart from './components/TopProductsChart';
 
 function App() {
   const [orders, setOrders] = useState([]);
@@ -97,6 +99,8 @@ function App() {
       <Header />
 
       <KpiCards summary={summary} />
+      <RevenueOverTimeChart />
+      <TopProductsChart />
 
       <div className="row g-4 mb-4">
         <div className="col-lg-6">
