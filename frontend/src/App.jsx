@@ -1,14 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import SearchPanel from './components/SearchPanel';
 import InsertOrderForm from './components/InsertOrderForm';
 import OrdersTable from './components/OrdersTable';
 import ExplainPanel from './components/ExplainPanel';
+import KpiCards from './components/KpiCards';
 
 function App() {
   const [orders, setOrders] = useState([]);
   const [explainText, setExplainText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [summary, setSummary] = useState(null);
+
+  const fetchSummary = async () => {
+    try {
+      const res = await fetch('http://localhost:5001/api/analytics/summary');
+  
+      if (!res.ok) {
+        throw new Error('Failed to fetch summary.');
+      }
+  
+      const data = await res.json();
+      setSummary(data);
+    } catch (error) {
+      console.error('Error fetching summary:', error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchSummary();
+  }, []);
 
   const runQuery = async (operation, value) => {
     setLoading(true);
@@ -65,6 +86,7 @@ function App() {
 
       const inserted = await res.json();
       setOrders((prev) => [inserted, ...prev]);
+      fetchSummary();
     } catch (error) {
       console.error('Error inserting order:', error);
     }
@@ -73,7 +95,9 @@ function App() {
   return (
     <div className="container py-4">
       <Header />
-  
+
+      <KpiCards summary={summary} />
+
       <div className="row g-4 mb-4">
         <div className="col-lg-6">
           <SearchPanel onRunQuery={runQuery} />

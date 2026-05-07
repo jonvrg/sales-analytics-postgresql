@@ -182,4 +182,27 @@ router.get('/explain/country', async (req, res) => {
   }
 });
 
+// Analytics summary / KPI cards
+router.get('/analytics/summary', async (_req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        COUNT(*) AS total_rows,
+        COUNT(DISTINCT invoice_no) AS total_orders,
+        COALESCE(SUM(quantity), 0) AS total_quantity,
+        COALESCE(ROUND(SUM(quantity * unit_price)::numeric, 2), 0) AS total_revenue,
+        COALESCE(ROUND(AVG(quantity * unit_price)::numeric, 2), 0) AS avg_line_value,
+        COALESCE(ROUND(AVG(unit_price)::numeric, 2), 0) AS avg_unit_price
+      FROM orders
+      WHERE quantity > 0
+        AND unit_price > 0
+    `);
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch analytics summary.' });
+  }
+});
+
 module.exports = router;
