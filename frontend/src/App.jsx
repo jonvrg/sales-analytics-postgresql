@@ -7,6 +7,7 @@ import ExplainPanel from './components/ExplainPanel';
 import KpiCards from './components/KpiCards';
 import RevenueOverTimeChart from './components/RevenueOverTimeChart';
 import TopProductsChart from './components/TopProductsChart';
+import RevenueByCountryChart from './components/RevenueByCountryChart';
 
 function App() {
   const [orders, setOrders] = useState([]);
@@ -101,6 +102,7 @@ function App() {
       <KpiCards summary={summary} />
       <RevenueOverTimeChart />
       <TopProductsChart />
+      <RevenueByCountryChart />
 
       <div className="row g-4 mb-4">
         <div className="col-lg-6">

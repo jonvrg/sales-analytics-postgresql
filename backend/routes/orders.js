@@ -317,4 +317,51 @@ router.get('/explain/top-products', async (_req, res) => {
   }
 });
 
+// Revenue by country chart
+router.get('/analytics/revenue-by-country', async (_req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        country,
+        ROUND(SUM(quantity * unit_price)::numeric, 2) AS revenue
+      FROM orders
+      WHERE quantity > 0
+        AND unit_price > 0
+        AND country IS NOT NULL
+      GROUP BY country
+      ORDER BY revenue DESC
+      LIMIT 10
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch revenue by country.' });
+  }
+});
+
+// EXPLAIN revenue by country
+router.get('/explain/revenue-by-country', async (_req, res) => {
+  try {
+    const result = await pool.query(`
+      EXPLAIN ANALYZE
+      SELECT
+        country,
+        ROUND(SUM(quantity * unit_price)::numeric, 2) AS revenue
+      FROM orders
+      WHERE quantity > 0
+        AND unit_price > 0
+        AND country IS NOT NULL
+      GROUP BY country
+      ORDER BY revenue DESC
+      LIMIT 10
+    `);
+
+    res.json(result.rows.map((r) => r['QUERY PLAN']).join('\n'));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to explain revenue by country query.' });
+  }
+});
+
 module.exports = router;
