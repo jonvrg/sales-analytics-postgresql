@@ -9,9 +9,7 @@ Dataset source: https://archive.ics.uci.edu/dataset/352/online+retail
 ---
 
 
-## Screenshots
-
-The application runs locally. The screenshots below show the completed dashboard interface, analytics visualizations, and PostgreSQL `EXPLAIN ANALYZE` query plan output.
+## App Demo
 
 ### Dashboard Overview
 
