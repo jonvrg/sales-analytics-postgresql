@@ -20,18 +20,7 @@ Dataset source: https://archive.ics.uci.edu/dataset/352/online+retail
 
 ### Environment Variables
 
-The backend uses a `.env` file for PostgreSQL connection settings. Do not upload your real `.env` file to GitHub.
-
-Create a file named `.env` inside the `backend/` folder:
-
-```env
-PORT=5001
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=sales_analytics
-DB_USER=postgres
-DB_PASSWORD=your_postgres_password_here
-```
+The backend uses a `.env` file for PostgreSQL connection settings. 
 
 A safe `.env.example` file should also be included in the repository:
 
