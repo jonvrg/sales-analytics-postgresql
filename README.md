@@ -8,6 +8,31 @@ Dataset source: https://archive.ics.uci.edu/dataset/352/online+retail
 
 ---
 
+
+## Screenshots
+
+The application runs locally. The screenshots below show the completed dashboard interface, analytics visualizations, and PostgreSQL `EXPLAIN ANALYZE` query plan output.
+
+### Dashboard Overview
+
+Shows the dashboard header, dataset source, KPI cards, and revenue-over-time chart.
+
+![Dashboard Overview](screenshots/dashboard-overview.png)
+
+### Analytics Charts
+
+Shows top products by revenue and revenue by country with the include/exclude UK toggle.
+
+![Analytics Charts](screenshots/analytics-charts.png)
+
+### EXPLAIN ANALYZE Output
+
+Shows PostgreSQL query plan output for a user query, including index usage, planning time, and execution time.
+
+![EXPLAIN ANALYZE Output](screenshots/explain-analyze.png)
+
+---
+
 ## Project Setup / Requirements
 
 ### Required Software
@@ -120,30 +145,6 @@ http://localhost:5173
 ```
 
 Open the frontend URL in the browser to use the dashboard.
-
----
-
-## Screenshots
-
-The application runs locally. The screenshots below show the completed dashboard interface, analytics visualizations, and PostgreSQL `EXPLAIN ANALYZE` query plan output.
-
-### Dashboard Overview
-
-Shows the dashboard header, dataset source, KPI cards, and revenue-over-time chart.
-
-![Dashboard Overview](screenshots/dashboard-overview.png)
-
-### Analytics Charts
-
-Shows top products by revenue and revenue by country with the include/exclude UK toggle.
-
-![Analytics Charts](screenshots/analytics-charts.png)
-
-### EXPLAIN ANALYZE Output
-
-Shows PostgreSQL query plan output for a user query, including index usage, planning time, and execution time.
-
-![EXPLAIN ANALYZE Output](screenshots/explain-analyze.png)
 
 ---
 
