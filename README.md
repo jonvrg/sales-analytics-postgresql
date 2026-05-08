@@ -203,7 +203,7 @@ Open the frontend URL in the browser to use the dashboard.
 
 ### B-tree Indexing
 
-- B-tree indexes are used to speed up queries on fields such as `order_date`, `product`, and `country`.
+- B-tree indexes are used to speed up queries on fields such as `order_date` and `product`.
 - The application demonstrates how indexed queries can reduce the need for full table scans.
 
 ### Query Planning
@@ -265,7 +265,7 @@ sales-analytics-postgresql/
 ├── backend/
 │   ├── routes/
 │   │   └── orders.js
-│   ├── .env
+│   ├── .env               # local only, not committed
 │   ├── .env.example
 │   ├── db.js
 │   ├── package.json
