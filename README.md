@@ -1,181 +1,320 @@
 # Sales Analytics PostgreSQL Dashboard
 
-A PostgreSQL-backed e-commerce sales analytics dashboard built using the Online Retail dataset via UCI Machine Learning Repository. The project focuses on database internals, especially **B-tree indexing**, **query planning**, and **MVCC**, and maps those internals to user-facing application operations such as recent-order lookup, product search, country filtering, and inserting new orders.
+## Project Description
 
-## Tech Stack
+This project is a PostgreSQL-backed e-commerce sales analytics dashboard built with React, Express, Node.js, and PostgreSQL. The application uses the Online Retail dataset from the UC Irvine Machine Learning Repository to analyze sales transactions, visualize business trends, and demonstrate how PostgreSQL query planning, B-tree indexing, aggregation, and `EXPLAIN ANALYZE` affect application behavior.
 
+The dashboard allows users to view recent orders, search products, filter orders by country, insert new orders, view sales KPIs, and analyze revenue through charts. 
+
+Each major analytics feature also includes a query plan view so users can connect the visual dashboard results to PostgreSQL performance behavior.
+
+Dataset source: https://archive.ics.uci.edu/dataset/352/online+retail
+
+---
+
+## Project Setup / Requirements
+
+### Required Software
+
+- Node.js and npm
 - PostgreSQL
-- pgAdmin 4
-- Node.js + Express
-- React + Vite
-- Bootstrap
+- pgAdmin or psql
+- Git
+- Code editor such as VS Code
 
-## Application Operations
+### Environment Variables
 
-The dashboard supports these main operations:
+The backend uses a `.env` file for PostgreSQL connection settings. Do not upload your real `.env` file to GitHub.
 
-### 1. Recent Orders by Date
-- Application: shows recent orders from the latest 7-day period in the dataset
-- Database internals: uses a B-tree index on `order_date`
-- Why it matters: enables index range scans instead of scanning the whole table
+Create a file named `.env` inside the `backend/` folder:
 
-### 2. Product Search
-- Application: searches products by keyword
-- Database internals: product search with `ILIKE '%term%'` can trigger a sequential scan
-- Why it matters: query structure affects whether an index can be used
-
-### 3. Filter by Country
-- Application: filters rows by country
-- Database internals: non-indexed filter results in sequential scan / parallel sequential scan
-- Why it matters: PostgreSQL must inspect many rows when no useful index exists
-
-### 4. Insert New Order
-- Application: inserts a new sales record through the dashboard
-- Database internals: PostgreSQL uses MVCC to handle concurrent reads and writes
-- Why it matters: supports live transaction-style workloads without heavy locking
-
-## Notes
-
-- The dataset is historical, so "recent" means recent **relative to the latest timestamp in the dataset**, not the current real-world date.
-- If you insert test rows during development, delete them before submission/demo.
-- Do **not** commit your real `.env` file to GitHub.
-
-## Project Structure
-
-```text
-sales-analytics-postgresql/
-├── backend/
-│   ├── .env.example
-│   ├── db.js
-│   ├── package.json
-│   ├── server.js
-│   └── routes/
-│       └── orders.js
-├── database/
-│   ├── OnlineRetail.csv
-│   ├── schema.sql
-│   ├── cleanup.sql
-│   ├── indexes.sql
-│   └── demo_queries.sql
-├── frontend/
-│   ├── package.json
-│   ├── index.html
-│   ├── vite.config.js
-│   └── src/
-└── README.md
+```env
+PORT=5001
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=sales_analytics
+DB_USER=postgres
+DB_PASSWORD=your_postgres_password_here
 ```
 
-## Requirements
+A safe `.env.example` file should also be included in the repository:
 
-Install these first:
+```env
+PORT=5001
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=sales_analytics
+DB_USER=postgres
+DB_PASSWORD=your_postgres_password_here
+```
 
-- PostgreSQL
-- pgAdmin 4
-- Node.js and npm
+---
 
-## 1. Create the PostgreSQL database
+## Dataset Setup
 
-Open pgAdmin and create a database named:
+This project uses the Online Retail dataset from the UC Irvine Machine Learning Repository.
+
+Dataset link: https://archive.ics.uci.edu/dataset/352/online+retail
+
+The dataset contains transactions from a UK-based online retail store between 2010 and 2011. It includes order information such as invoice number, product description, quantity, invoice date, unit price, customer ID, and country.
+
+### Dataset Instructions
+
+1.  The dataset file is already included in this repository:
+
+```text
+database/OnlineRetail.csv
+```
+
+2. Create the PostgreSQL database:
 
 ```sql
 CREATE DATABASE sales_analytics;
 ```
 
-## 2. Run the schema
+3. Run the schema file:
 
-Open the `sales_analytics` database in pgAdmin Query Tool and run:
+```bash
+psql -U postgres -d sales_analytics -f database/schema.sql
+```
 
-- `database/schema.sql`
+4. Load the dataset into PostgreSQL using the provided database scripts or by importing the CSV through pgAdmin/psql.
 
-This creates:
-- `orders_raw_text`
-- `orders`
+5. Run the indexes file:
 
-## 3. Import the dataset CSV
+```bash
+psql -U postgres -d sales_analytics -f database/indexes.sql
+```
 
-In pgAdmin:
+---
 
-1. Expand:
-   - `sales_analytics`
-   - `Schemas`
-   - `public`
-   - `Tables`
-2. Right-click `orders_raw_text`
-3. Choose **Import/Export Data**
-4. Import `database/OnlineRetail.csv`
+## Install Dependencies
 
-Recommended import settings:
-- Format: `csv`
-- Header: `Yes`
-
-## 4. Clean and load the final table
-
-Run:
-- `database/cleanup.sql`
-This moves cleaned rows from `orders_raw_text` into `orders`.
-
-## 5. Create indexes
-
-Run:
-- `database/indexes.sql`
-
-This creates:
-- `idx_orders_order_date`
-- `idx_orders_product`
-
-## 6. Verify the database
-
-Run:
-- `database/demo_queries.sql`
-
-This includes:
-- row count check
-- sample row preview
-- `EXPLAIN ANALYZE` queries for the demo
-
-## 7. Set up the backend
-
-Go into the backend folder:
+### Backend
 
 ```bash
 cd backend
 npm install
 ```
 
-Create a `.env` file by copying `.env.example`:
+### Frontend
 
 ```bash
-cp .env.example .env
+cd frontend
+npm install
 ```
-Then edit `.env` and fill in your PostgreSQL password.
 
-Start the backend:
+---
+
+## Run the Application
+
+### Start the Backend
+
+From the `backend/` folder:
+
 ```bash
 node server.js
 ```
 
-Backend runs at:
+The backend runs on:
 
 ```text
 http://localhost:5001
 ```
 
-You can test it in the browser:
-```text
-http://localhost:5001/
-http://localhost:5001/api/orders/recent
-```
+### Start the Frontend
 
-## 8. Set up the frontend
+From the `frontend/` folder:
 
-Open a new terminal:
 ```bash
-cd frontend
-npm install
 npm run dev
 ```
 
-Frontend runs at:
+The frontend runs on:
+
 ```text
 http://localhost:5173
 ```
+
+Open the frontend URL in the browser to use the dashboard.
+
+---
+
+## Tech Stack
+
+- PostgreSQL: relational database system used to store and query the e-commerce transaction data.
+- Express and Node.js: backend server and REST API layer for connecting the frontend to PostgreSQL.
+- React and Vite: frontend dashboard framework and development environment.
+- Recharts: charting library used for revenue visualizations.
+- Bootstrap/CSS: layout, cards, forms, and dashboard styling.
+- UCI Online Retail dataset: real-world transactional e-commerce dataset.
+
+---
+
+## Application Operations
+
+### Recent Orders
+
+- Shows the most recent orders based on the latest order date in the dataset.
+
+### Product Search
+
+- Allows users to search for orders by product name.
+
+### Country Filter
+
+- Allows users to filter orders by country.
+
+### Insert New Order
+
+- Allows users to manually insert a new order into the PostgreSQL database.
+
+### KPI Cards
+
+- Displays total revenue, total orders, quantity sold, average line value, and average unit price.
+
+### Revenue Over Time Chart
+
+- Displays daily revenue using `quantity × unit_price`.
+
+### Top Products by Revenue Chart
+
+- Displays the highest revenue-generating products.
+
+### Revenue by Country Chart
+
+- Displays revenue ranking and revenue share by country.
+- Includes a bar chart, pie chart, and an include/exclude UK toggle to handle the United Kingdom as a dominant outlier.
+
+### EXPLAIN ANALYZE Panel
+
+- Shows PostgreSQL query plans for user-driven queries such as recent orders, product search, and country filtering.
+- Helps connect the dashboard’s results to database internals such as sequential scans, index scans, sorting, aggregation, planning time, and execution time.
+
+---
+
+## Database Internals Demonstrated
+
+### B-tree Indexing
+
+- B-tree indexes are used to speed up queries on fields such as `order_date`, `product`, and `country`.
+- The application demonstrates how indexed queries can reduce the need for full table scans.
+
+### Query Planning
+
+- PostgreSQL’s query planner selects execution strategies such as sequential scans, index scans, sorting, and aggregation.
+- `EXPLAIN ANALYZE` is used to view actual planning time and execution time.
+
+### Aggregation
+
+- The dashboard uses aggregation queries for KPI cards and revenue charts.
+- Examples include `SUM(quantity * unit_price)`, `COUNT(DISTINCT invoice_no)`, and `GROUP BY` operations.
+
+### MVCC / Transaction Behavior
+
+- PostgreSQL supports concurrent reads and writes using Multi-Version Concurrency Control.
+- The insert feature conceptually demonstrates how new transactions can be added while users continue querying the dashboard.
+
+---
+
+## API Routes
+
+### Order Routes
+
+```text
+GET    /api/orders/recent
+GET    /api/orders/product?search=value
+GET    /api/orders/country?country=value
+POST   /api/orders
+```
+
+### Analytics Routes
+
+```text
+GET    /api/analytics/summary
+GET    /api/analytics/revenue-over-time
+GET    /api/analytics/top-products
+GET    /api/analytics/revenue-by-country
+```
+
+### EXPLAIN ANALYZE Routes
+
+```text
+GET    /api/explain/recent
+GET    /api/explain/product?search=value
+GET    /api/explain/country?country=value
+GET    /api/explain/summary
+GET    /api/explain/revenue-over-time
+GET    /api/explain/top-products
+GET    /api/explain/revenue-by-country
+```
+
+---
+
+## Project Structure
+
+```text
+sales-analytics-postgresql/
+│
+├── backend/
+│   ├── routes/
+│   │   └── orders.js
+│   ├── .env
+│   ├── .env.example
+│   ├── db.js
+│   ├── package.json
+│   └── server.js
+│
+├── database/
+│   ├── cleanup.sql
+│   ├── demo_queries.sql
+│   ├── indexes.sql
+│   ├── OnlineRetail.csv
+│   └── schema.sql
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ExplainPanel.jsx
+│   │   │   ├── Header.jsx
+│   │   │   ├── InsertOrderForm.jsx
+│   │   │   ├── KpiCards.jsx
+│   │   │   ├── OrdersTable.jsx
+│   │   │   ├── RevenueByCountryChart.jsx
+│   │   │   ├── RevenueOverTimeChart.jsx
+│   │   │   ├── SearchPanel.jsx
+│   │   │   └── TopProductsChart.jsx
+│   │   ├── styles/
+│   │   │   └── App.css
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.js
+│
+├── .gitignore
+└── README.md
+```
+
+---
+
+## Reproducing Results
+
+To reproduce the dashboard results:
+
+1. Install PostgreSQL and create the `sales_analytics` database.
+2. Recognize the dataset in the `database/` folder.
+3. Run the schema and index SQL files.
+4. Configure the backend `.env` file.
+5. Start the backend server.
+6. Start the frontend development server.
+7. Open the dashboard in the browser.
+8. Use the search, filter, chart, and query plan buttons to reproduce the analytics and PostgreSQL `EXPLAIN ANALYZE` outputs.
+
+---
+
+## Notes on Credentials
+
+This project does not require external API keys. It does require local PostgreSQL credentials in the backend `.env` file.
