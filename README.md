@@ -53,7 +53,7 @@ database/OnlineRetail.csv
 CREATE DATABASE sales_analytics;
 ```
 
-3. Run the schema file:
+3. Run this command from the project root in a terminal:
 
 ```bash
 psql -U postgres -d sales_analytics -f database/schema.sql
