@@ -4,10 +4,6 @@
 
 This project is a PostgreSQL-backed e-commerce sales analytics dashboard built with React, Express, Node.js, and PostgreSQL. The application uses the Online Retail dataset from the UC Irvine Machine Learning Repository to analyze sales transactions, visualize business trends, and demonstrate how PostgreSQL query planning, B-tree indexing, aggregation, and `EXPLAIN ANALYZE` affect application behavior.
 
-The dashboard allows users to view recent orders, search products, filter orders by country, insert new orders, view sales KPIs, and analyze revenue through charts. 
-
-Each major analytics feature also includes a query plan view so users can connect the visual dashboard results to PostgreSQL performance behavior.
-
 Dataset source: https://archive.ics.uci.edu/dataset/352/online+retail
 
 ---
@@ -53,10 +49,6 @@ DB_PASSWORD=your_postgres_password_here
 ## Dataset Setup
 
 This project uses the Online Retail dataset from the UC Irvine Machine Learning Repository.
-
-Dataset link: https://archive.ics.uci.edu/dataset/352/online+retail
-
-The dataset contains transactions from a UK-based online retail store between 2010 and 2011. It includes order information such as invoice number, product description, quantity, invoice date, unit price, customer ID, and country.
 
 ### Dataset Instructions
 
