@@ -103,9 +103,9 @@ function TopProductsChart() {
         </div>
 
         {showExplain && (
-          <pre className="bg-light border rounded p-3 mt-3 small">
-            {explainText}
-          </pre>
+            <pre className="query-plan-box">
+                {explainText}
+            </pre>
         )}
       </div>
     </div>

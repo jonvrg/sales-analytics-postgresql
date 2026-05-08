@@ -28,9 +28,8 @@ function ExplainPanel({ explainText }) {
 
         {!hasExplainText && (
           <div className="alert alert-info mb-0">
-            Run a query from the Search / Filter panel to display the PostgreSQL
-            query plan. This will show whether PostgreSQL used an index scan,
-            sequential scan, sorting, filtering, and the total execution time.
+            Run a query from the Search / Filter panel. This will show whether PostgreSQL used an index scan,
+            sequential scan, sorting, filtering, and the planning/total execution time.
           </div>
         )}
 

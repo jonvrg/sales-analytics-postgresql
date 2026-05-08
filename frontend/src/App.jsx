@@ -8,6 +8,7 @@ import KpiCards from './components/KpiCards';
 import RevenueOverTimeChart from './components/RevenueOverTimeChart';
 import TopProductsChart from './components/TopProductsChart';
 import RevenueByCountryChart from './components/RevenueByCountryChart';
+import './styles/App.css';
 
 function App() {
   const [orders, setOrders] = useState([]);

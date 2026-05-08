@@ -1,14 +1,14 @@
 function Header() {
   return (
-    <div className="mb-4">
+    <div className="dashboard-header mb-4">
       <h1>Sales Analytics Dashboard</h1>
 
-      <p className="text-muted mb-2">
+      <p className="subtitle mb-3">
         PostgreSQL-backed e-commerce analytics with focus on B-tree indexing,
         query planning, and MVCC.
       </p>
 
-      <div className="alert alert-light border mb-0">
+      <div className="dataset-box">
         <strong>Dataset:</strong>{' '}
         <a
           href="https://archive.ics.uci.edu/dataset/352/online+retail"

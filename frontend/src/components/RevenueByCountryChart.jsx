@@ -183,9 +183,9 @@ function RevenueByCountryChart() {
         </div>
 
         {showExplain && (
-          <pre className="bg-light border rounded p-3 mt-3 small">
+        <pre className="query-plan-box">
             {explainText}
-          </pre>
+        </pre>
         )}
       </div>
     </div>

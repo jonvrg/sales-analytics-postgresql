@@ -35,7 +35,7 @@ function KpiCards({ summary }) {
 
   if (!summary) {
     return (
-      <div className="card shadow-sm mb-4">
+     <div className="card kpi-card h-100">
         <div className="card-body">
           <p className="mb-0 text-muted">Loading summary metrics...</p>
         </div>
@@ -69,9 +69,9 @@ function KpiCards({ summary }) {
   return (
     <div className="mb-4">
       <div className="d-flex justify-content-between align-items-center mb-2">
-        <h5 className="mb-0">Key Performance Indicators</h5>
+        <h5 className="dashboard-section-title mb-0">Key Performance Indicators</h5>
 
-        <button className="btn btn-outline-secondary btn-sm" onClick={fetchExplain}>
+        <button className="btn btn-outline-light btn-sm" onClick={fetchExplain}>
           {showExplain ? 'Hide KPI Query Plan' : 'View KPI Query Plan'}
         </button>
       </div>
@@ -90,10 +90,10 @@ function KpiCards({ summary }) {
       </div>
 
       {showExplain && (
-        <pre className="bg-light border rounded p-3 mt-3 small">
-          {explainText}
+        <pre className="query-plan-box">
+            {explainText}
         </pre>
-      )}
+       )}
     </div>
   );
 }
