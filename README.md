@@ -33,6 +33,8 @@ DB_USER=postgres
 DB_PASSWORD=your_postgres_password_here
 ```
 
+Create a `backend/.env` file using `.env.example` as a template. Replace `DB_PASSWORD` with your local PostgreSQL password.
+
 ---
 
 ## Dataset Setup
@@ -59,7 +61,7 @@ CREATE DATABASE sales_analytics;
 psql -U postgres -d sales_analytics -f database/schema.sql
 ```
 
-4. Load the dataset into PostgreSQL using the provided database scripts or by importing the CSV through pgAdmin/psql.
+4. Load `database/OnlineRetail.csv` into the `orders` table using pgAdmin's Import/Export tool or a psql `COPY` command. Make sure the CSV headers match the table columns defined in `schema.sql`.
 
 5. Run the indexes file:
 
@@ -118,6 +120,30 @@ http://localhost:5173
 ```
 
 Open the frontend URL in the browser to use the dashboard.
+
+---
+
+## Screenshots
+
+The application runs locally. The screenshots below show the completed dashboard interface, analytics visualizations, and PostgreSQL `EXPLAIN ANALYZE` query plan output.
+
+### Dashboard Overview
+
+Shows the dashboard header, dataset source, KPI cards, and revenue-over-time chart.
+
+![Dashboard Overview](screenshots/dashboard-overview.png)
+
+### Analytics Charts
+
+Shows top products by revenue and revenue by country with the include/exclude UK toggle.
+
+![Analytics Charts](screenshots/analytics-charts.png)
+
+### EXPLAIN ANALYZE Output
+
+Shows PostgreSQL query plan output for a user query, including index usage, planning time, and execution time.
+
+![EXPLAIN ANALYZE Output](screenshots/explain-analyze.png)
 
 ---
 
@@ -286,7 +312,7 @@ sales-analytics-postgresql/
 To reproduce the dashboard results:
 
 1. Install PostgreSQL and create the `sales_analytics` database.
-2. Recognize the dataset in the `database/` folder.
+2. Confirm that `database/OnlineRetail.csv` exists in the repository.
 3. Run the schema and index SQL files.
 4. Configure the backend `.env` file.
 5. Start the backend server.
