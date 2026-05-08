@@ -324,3 +324,4 @@ To reproduce the dashboard results:
 ## Notes on Credentials
 
 This project does not require external API keys. It does require local PostgreSQL credentials in the backend `.env` file.
+Do not commit the real `.env` file to GitHub. Only commit `.env.example`.
